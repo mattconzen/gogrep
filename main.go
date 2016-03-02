@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"time"
 )
 
 func main() {
@@ -24,15 +25,20 @@ func main() {
 		//  fmt.Println(len(record))
 
 		for value := range record {
-			out := exec.Command("git", "--no-pager", "grep", "range")
+			out := exec.Command("git", "--no-pager", "grep", time.Now().String())
 			var outbuf, errbuf bytes.Buffer
 			out.Stdout = &outbuf
 			out.Stderr = &errbuf
 			out.Run()
 			if err != nil {
-				fmt.Printf(err.Error())
+				fmt.Printf("%d - %s", value, err.Error())
 			}
-			fmt.Printf(" %s %s - %v\n\n", errbuf.String(), outbuf.String(), record[value])
+
+			if outbuf.String() == "" {
+				fmt.Printf("'%s' not found in repository.\n\n", outbuf.String())
+			}
+			//Print output from Git Grep
+			// fmt.Printf(" %s %s - %v\n\n", errbuf.String(), outbuf.String(), record[value])
 		}
 	}
 }

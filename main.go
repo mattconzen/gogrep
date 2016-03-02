@@ -20,21 +20,19 @@ func main() {
 			break
 		}
 
-		//Print all records
-		//  fmt.Println(record)
 		//Print number of records read.
 		//  fmt.Println(len(record))
 
 		for value := range record {
-			out := exec.Command("git", "--no-pager grep 'range'")
+			out := exec.Command("git", "--no-pager", "grep", "range")
 			var outbuf, errbuf bytes.Buffer
 			out.Stdout = &outbuf
-			out.Stdin = &errbuf
+			out.Stderr = &errbuf
 			out.Run()
 			if err != nil {
 				fmt.Printf(err.Error())
 			}
-			fmt.Printf(" %s %s - %v\n", errbuf.String(), outbuf.String(), record[value])
+			fmt.Printf(" %s %s - %v\n\n", errbuf.String(), outbuf.String(), record[value])
 		}
 	}
 }

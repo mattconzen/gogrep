@@ -2,10 +2,12 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/csv"
 	"fmt"
 	"io"
 	"os"
+	"os/exec"
 )
 
 func main() {
@@ -24,7 +26,15 @@ func main() {
 		//  fmt.Println(len(record))
 
 		for value := range record {
-			fmt.Printf("  %v\n", record[value])
+			out := exec.Command("git", "--no-pager grep 'range'")
+			var outbuf, errbuf bytes.Buffer
+			out.Stdout = &outbuf
+			out.Stdin = &errbuf
+			out.Run()
+			if err != nil {
+				fmt.Printf(err.Error())
+			}
+			fmt.Printf(" %s %s - %v\n", errbuf.String(), outbuf.String(), record[value])
 		}
 	}
 }

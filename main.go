@@ -8,12 +8,13 @@ import (
 	"io"
 	"os"
 	"os/exec"
-	"time"
 )
 
 func main() {
 	f, _ := os.Open("prefs.csv")
+    o, _ := os.Create("output.csv")
 	r := csv.NewReader(bufio.NewReader(f))
+    w := csv.NewWriter(o)
 	for {
 		record, err := r.Read()
 
@@ -22,10 +23,12 @@ func main() {
 		}
 
 		//Print number of records read.
-		//  fmt.Println(len(record))
+		fmt.Println(len(record))
 
+        os.Chdir(string("C:\\Users\\Matthew\\go\\src\\github.com\\mattconzen\\GoExplore"))
+        
 		for value := range record {
-			out := exec.Command("git", "--no-pager", "grep", time.Now().String())
+			out := exec.Command("git", "--no-pager", "grep", record[value])
 			var outbuf, errbuf bytes.Buffer
 			out.Stdout = &outbuf
 			out.Stderr = &errbuf
@@ -35,10 +38,14 @@ func main() {
 			}
 
 			if outbuf.String() == "" {
-				fmt.Printf("'%s' not found in repository.\n\n", outbuf.String())
-			}
-			//Print output from Git Grep
-			// fmt.Printf(" %s %s - %v\n\n", errbuf.String(), outbuf.String(), record[value])
-		}
+				fmt.Printf("'%s' not found in repository.\n\n", record[value])
+                w.Write( []string{ record[value], "0" } )
+			} else {
+                fmt.Printf(" %s %s - %v\n\n", errbuf.String(), outbuf.String(), record[value])
+                w.Write( []string{ record[value], "1" } )
+            }
+        }
+        // Write all buffered data to the output file.
+        w.Flush()
 	}
 }

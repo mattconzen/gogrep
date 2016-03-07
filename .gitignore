@@ -26,3 +26,6 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
+#Ignore output artifacts
+output.csv

@@ -42,7 +42,7 @@ func main() {
     os.Chdir(string(*repoLocationPtr))
 
 		for value := range record {
-			out := exec.Command("git", "--no-pager", "grep", record[value])
+			out := exec.Command("git", "--no-pager", "grep", "-i", record[value])
 			var outbuf, errbuf bytes.Buffer
 			out.Stdout = &outbuf
 			out.Stderr = &errbuf

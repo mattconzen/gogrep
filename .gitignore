@@ -27,5 +27,12 @@ _testmain.go
 *.test
 *.prof
 
-#Ignore output artifacts
-output.csv
+#Ignore input/output files
+*.csv
+
+#Vim files 
+*.swp
+*.un~
+*.csv~
+*.go~
+.gitignore~

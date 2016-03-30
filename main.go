@@ -8,25 +8,39 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"flag"
 )
 
 func main() {
-	f, _ := os.Open("prefs.csv")
-    o, _ := os.Create("output.csv")
+	inputFilePtr := flag.String("input", "input.csv",
+															`String: A file containing a comma-separated list of
+															terms to search for in the repository. (Default: input.csv)`)
+
+  outputFilePtr := flag.String("output", "output.csv",
+															 `String: File location for the CSV representation of
+															 	the results. (Default: output.csv)`)
+
+  repoLocationPtr := flag.String("repo", "C:\repo", `String: Repository location on disk.`)
+
+	flag.Parse()
+
+	f, _ := os.Open(*inputFilePtr)
+  o, _ := os.Create(*outputFilePtr)
 	r := csv.NewReader(bufio.NewReader(f))
-    w := csv.NewWriter(o)
+  w := csv.NewWriter(o)
+
 	for {
 		record, err := r.Read()
 
-		if err == io.EOF {
+		if err == io.EOF || err != nil {
 			break
 		}
 
 		//Print number of records read.
 		fmt.Println(len(record))
 
-        os.Chdir(string("C:\\Users\\Matthew\\go\\src\\github.com\\mattconzen\\GoExplore"))
-        
+    os.Chdir(string(*repoLocationPtr))
+
 		for value := range record {
 			out := exec.Command("git", "--no-pager", "grep", record[value])
 			var outbuf, errbuf bytes.Buffer

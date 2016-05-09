@@ -38,8 +38,16 @@ func main() {
 
 		//Print number of records read.
 		fmt.Println(len(record))
+		fmt.Println(string(*repoLocationPtr))
 
-    os.Chdir(string(*repoLocationPtr))
+    dir, err := os.Open(string(*repoLocationPtr))
+
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		} else {
+			dir.Chdir()
+		}
 
 		for value := range record {
 			out := exec.Command("git", "--no-pager", "grep", "-i", record[value])

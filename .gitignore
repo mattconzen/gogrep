@@ -1,3 +1,4 @@
+gogrep
 
 # Created by https://www.gitignore.io/api/go
 
@@ -30,7 +31,7 @@ _testmain.go
 #Ignore input/output files
 *.csv
 
-#Vim files 
+#Vim files
 *.swp
 *.un~
 *.csv~

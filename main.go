@@ -4,30 +4,30 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/csv"
+	"flag"
 	"fmt"
 	"io"
 	"os"
 	"os/exec"
-	"flag"
 )
 
 func main() {
 	inputFilePtr := flag.String("input", "input.csv",
-															`String: A file containing a comma-separated list of
+		`String: A file containing a comma-separated list of
 															terms to search for in the repository. (Default: input.csv)`)
 
-  outputFilePtr := flag.String("output", "output.csv",
-															 `String: File location for the CSV representation of
+	outputFilePtr := flag.String("output", "output.csv",
+		`String: File location for the CSV representation of
 															 	the results. (Default: output.csv)`)
 
-  repoLocationPtr := flag.String("repo", "", `String: Repository location on disk.`)
+	repoLocationPtr := flag.String("repo", "", `String: Repository location on disk.`)
 
 	flag.Parse()
 
 	f, _ := os.Open(*inputFilePtr)
-  o, _ := os.Create(*outputFilePtr)
+	o, _ := os.Create(*outputFilePtr)
 	r := csv.NewReader(bufio.NewReader(f))
-  w := csv.NewWriter(o)
+	w := csv.NewWriter(o)
 	repo := string(*repoLocationPtr)
 
 	for {
@@ -41,8 +41,9 @@ func main() {
 		fmt.Println(len(record))
 		fmt.Println(repo)
 
+		// Change directory if repo arg has been passed in
 		if repo != "" && len(repo) > 0 {
-	    dir, err := os.Open(repo)
+			dir, err := os.Open(repo)
 
 			if err != nil {
 				fmt.Println(err)
@@ -64,13 +65,14 @@ func main() {
 
 			if outbuf.String() == "" {
 				fmt.Printf("'%s' not found in repository.\n\n", record[value])
-                w.Write( []string{ record[value], "0" } )
+				w.Write([]string{record[value], "0"})
 			} else {
-                fmt.Printf(" %s %s - %v\n\n", errbuf.String(), outbuf.String(), record[value])
-                w.Write( []string{ record[value], "1" } )
-            }
-        }
-        // Write all buffered data to the output file.
-        w.Flush()
+				fmt.Printf(" %s %s - %v\n\n", errbuf.String(), outbuf.String(), record[value])
+				w.Write([]string{record[value], "1"})
+			}
+		}
+
+		// Write all buffered data to the output file.
+		w.Flush()
 	}
 }
